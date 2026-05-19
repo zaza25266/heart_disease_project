@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import sqlite3
 from dotenv import load_dotenv
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import  OneHotEncoder, RobustScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer, KNNImputer
@@ -69,7 +69,7 @@ def build_preprocessing_pipeline():
 
     # build pipeline for different datatype
     numeric_transformer = Pipeline(
-        steps=[("imputer", KNNImputer(n_neighbors=5)), ("scaler", StandardScaler())]
+        steps=[("imputer", KNNImputer(n_neighbors=5)), ("scaler", RobustScaler())]
     )
 
     categorical_transformer = Pipeline(
