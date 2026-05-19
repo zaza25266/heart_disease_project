@@ -10,7 +10,7 @@ from sklearn.model_selection import GridSearchCV, cross_validate
 import numpy as np  
 
 # import pre-processing functions
-from src.pre_processing import load_and_process_data, build_preprocessing_pipeline
+from preprosess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
 
 
 # configure mlflow  track experiments locally
