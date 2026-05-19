@@ -1,6 +1,4 @@
 
-from pyexpat import model
-
 import joblib
 import mlflow
 import mlflow.sklearn
@@ -106,7 +104,7 @@ def train_and_log_models():
         
         
         # Log Logistic Regression metrics
-        mlflow.log_params(param_grid_LR.best_params_)
+        mlflow.log_params(grid_search_LR.best_params_)
         log_matrices(y_test, y_predict_LR, y_prob_LR, model_name="Logistic_Regression")
         # Log model
         mlflow.sklearn.log_model(best_LR_model, "Tuned_logistic_regression_model")
