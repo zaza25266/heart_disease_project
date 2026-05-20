@@ -3,3 +3,5 @@ heart_disease_project.egg-info/PKG-INFO
 heart_disease_project.egg-info/SOURCES.txt
 heart_disease_project.egg-info/dependency_links.txt
 heart_disease_project.egg-info/top_level.txt
+preprosess_pipeline/__init__.py
+preprosess_pipeline/pre_processing.py
