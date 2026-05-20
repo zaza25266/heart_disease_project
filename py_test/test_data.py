@@ -25,12 +25,12 @@ def test_data_splits_are_correct(data_split):
     X_train, X_test, y_train, y_test = data_split
     
     assert len(X_train) > len(X_test), "Training set should be larger than test set"
-    assert X_train.shape[1] == 14, "There should be 14 features in the training data"
+    assert X_train.shape[1] == 15, "There should be 15 features in the training data"
     assert y_train.isnull().sum() == 0, "There should be no missing values in the training target data"
     assert y_test.isnull().sum() == 0, "There should be no missing"
     
     unique_targets = y_train.unique()
-    assert set(unique_targets) == {0, 1, 2, 3, 4}, "Target variable should have values from 0 to 4"
+    assert set(unique_targets) == {0, 1}, "Target variable should have binary values {0, 1}"
     
 def test_preprocessing_pipeline(data_split, pipelines):
     """
@@ -82,13 +82,13 @@ def test_model_training_smoke_test(data_split, pipelines):
     assert len(predictions) == len(X_test), "Number of predictions should match number of test samples"
     
 
-def test_pipeline_determinism(data_splits, pipelines):
+def test_pipeline_determinism(data_split, pipelines):
     """
     Test 5: Pipeline determinism
     ensures that running the pipeline twice on the same data yields 
     the EXACT same results
     """
-    X_train, X_test, y_train, y_test = data_splits
+    X_train, X_test, y_train, y_test = data_split
     
     pipeline1 = pipelines
     pipeline2 = pipelines
@@ -103,13 +103,13 @@ def test_pipeline_determinism(data_splits, pipelines):
     )
     
 
-def test_stratification_balance(data_splits):
+def test_stratification_balance(data_split):
     """
     Test 6: class stratification check
     ensures that the ratio of sick vs healthy patients is mathematically preserved 
     across both the training and testing sets
     """
-    _, _, y_train, y_test = data_splits
+    _, _, y_train, y_test = data_split
     
     # Calculate the percentage of positive cases (1s) in both sets
     train_sick_ratio = y_train.mean()

@@ -48,5 +48,5 @@ jobs:
         env:
           DB_PATH: data/ml_project.db
         run: |
-          pytest test/
+          pytest py_test/
 
