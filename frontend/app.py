@@ -72,4 +72,29 @@ if submit_button:
         "thal": thal_map[thal_choice]
     }
     
+    try:
+        with st.spinner("Transmitting data to ML Backend..."):
+            # send data to fastapi
+            response = requests.post(API_URL, json = payload)
+            
+            if response.status_code == 200:
+                result = response.json()
+                
+                st.divider()
+                st.subheader("Diagnostic Results")
+                
+                # display results based on risk level
+                risk_percent = result["risk_probability"] * 100
+                
+                if result["prediction_class"] == 1:
+                    st.error(f"**{result['clinical_status']}** (Confidence: {risk_percent:.1f}%)")
+                else:
+                    st.success(f"**{result['clinical_status']}** (Confidence: {risk_percent:.1f}%)")
+                
+                st.info(f"System Message: {result['message']}")
+            else:
+                st.error(f"API Error {response.status_code}: {response.text}")
     
+    except requests.exceptions.ConnectionError:
+        st.error("Failed to connect to the backend api")
+            
