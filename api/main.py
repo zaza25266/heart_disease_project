@@ -8,8 +8,13 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 
+# import logger
+from logs.logger import get_core_logger
+
 load_dotenv()
 
+# initialize logger for api
+logger = get_core_logger("FastAPI_Backend")
 
 app = FastAPI(
     title="Heart Disease Clinical Diagnostics API",
@@ -17,14 +22,18 @@ app = FastAPI(
     version="1.0.0"
 )
 
+logger.info("starting fastapi application...")
+
 MODEL_PATH = "models/best_Tuned_Logistic_Regression.pkl"
 
 # load the trained model
 try:
     model = joblib.load(MODEL_PATH)
+    logger.info(f"Model loaded successfully from {MODEL_PATH}")
+    
 except Exception as e:
-    print(f"Error loading model: {e}")
     model = None
+    logger.error(f"Error loading model: {str(e)}")
 
 # incoming JSON payload
 class PatientData(BaseModel):
@@ -64,11 +73,15 @@ def log_prediction_to_db(input_data : dict, prediction: int, probability: float)
     
     conn.commit()
     conn.close()
+    logger.info(f"prediction stored to the database (prediction: {prediction})")
     
 # prediction endpoint
 @app.post("/predict")
 def predict_heart_disease(patient: PatientData):
+    logger.info(f"incoming prediction request recieved via POST / predict (patient: {patient})")
+    
     if model is None:
+        logger.info("model not loaded, cannot generate prediction")
         raise HTTPException(status_code=500, detail="Model not loaded")
     
     # convert pydantic model to dict and then to DataFrame
@@ -86,6 +99,7 @@ def predict_heart_disease(patient: PatientData):
         
         # Log telemetry to SQLite
         log_prediction_to_db(data_dict, prediction, probability)
+        logger.info(f"prediction successful. returning payload (High Risk: {prediction == 1})")
         # return formatted response
         return{
             "prediction_class": prediction,
@@ -95,4 +109,5 @@ def predict_heart_disease(patient: PatientData):
         }
         
     except Exception as e:
+        logger.error(f"pipeline execution crashed during prediction : {str(e)}")
         raise HTTPException(status_code=400, detail=f"Prediction error: {str(e)}")
