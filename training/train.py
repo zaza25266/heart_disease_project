@@ -71,7 +71,7 @@ def select_best_cv(model_dict, X_train, y_train):
     print(f"\nBest model based on CV scores: {winner_model_name} with mean_recall: {winner_model_info['mean_recall']:.4f}, mean_roc_auc: {winner_model_info['mean_roc_auc']:.4f}, mean_f1: {winner_model_info['mean_f1']:.4f}, mean_precision: {winner_model_info['mean_precision']:.4f}, mean_accuracy: {winner_model_info['mean_accuracy']:.4f}")
     
     # Serialize the best model using joblib
-    joblib.dump(winner_model_info['model'], f"best_{winner_model_name}.pkl")
+    joblib.dump(winner_model_info['model'], f"models/best_{winner_model_name}.pkl")
     print(f"best {winner_model_name} model serialized to disk")
     
   
