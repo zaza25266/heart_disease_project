@@ -1,0 +1,57 @@
+
+name: Heart Disease Pipeline CI Run
+
+# Triggers this workflow on push or pull request events to the main branch
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project repository code
+        uses: actions/checkout@v4
+
+      - name: Initialize Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os}}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+          if [ -d "setup" ]; then
+              pip install -e setup/
+          else
+              pip install -e .
+          fi
+
+      - name: Bootstrap Database Storage Infrastructure
+        env:
+          DB_PATH: data/mi_project.db
+        run: |
+          if [ -f "setup/data_setup.py" ]; then
+            python setup/data_setup.py
+          else
+            python pre_processing/pre_processing.py || true
+          fi
+
+      - name: Execute automation testing
+        env:
+          DB_PATH: data/ml_project.db
+        run: |
+          pytest test/
+
