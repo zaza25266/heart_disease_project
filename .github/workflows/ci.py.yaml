@@ -36,7 +36,7 @@ jobs:
 
       - name: Bootstrap Database Storage Infrastructure
         env:
-          DB_PATH: data/mi_project.db
+          DB_PATH: data/ml_project.db
         run: |
           if [ -f "setup/data_setup.py" ]; then
             python setup/data_setup.py
