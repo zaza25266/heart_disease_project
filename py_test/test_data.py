@@ -1,5 +1,6 @@
 
 import pytest 
+import os
 import numpy as np 
 from preprosess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
 from sklearn.ensemble import RandomForestClassifier
@@ -12,7 +13,10 @@ def data_split():
 def pipelines():
     return build_preprocessing_pipeline()
 
-
+def test_data_ingestion():
+    db_path = os.getenv("DB_PATH", "data/ml_project.db")
+    assert os.path.exists(db_path), f"database file missing {db_path} during testing"
+    
 def test_data_splits_are_correct(data_split):
     """
     Test 1: ensures the database extraction and train/test splits return
