@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 # import logger
 from logs.logger import get_core_logger
@@ -20,6 +21,15 @@ app = FastAPI(
     title="Heart Disease Clinical Diagnostics API",
     description="An API for predicting heart disease risk based on clinical data.", 
     version="1.0.0"
+)
+
+# cross_over_resourse sharing to website
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 logger.info("starting fastapi application...")
