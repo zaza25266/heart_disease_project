@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('prediction-form').addEventListener('submit', async function(e) {
         e.preventDefault(); // Absolute block on page reload
 
+        document.getElementById('loading-message').classList.remove('hidden');
+        document.getElementById('result-box').classList.add('hidden');
+
         const payload = {
             age: parseFloat(document.getElementById('age').value),
             trestbps: parseFloat(document.getElementById('trestbps').value),
@@ -57,7 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300";
             resultMessage.innerText = "Failed to connect to the backend API. Is FastAPI running?";
-        }
+        } finally {
+        // 2. HIDE THE RED MESSAGE when the fetch is totally finished
+        document.getElementById('loading-message').classList.add('hidden');
+    }
     });
 
     // PDF Export Logic

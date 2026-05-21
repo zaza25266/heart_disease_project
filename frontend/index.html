@@ -78,12 +78,17 @@
             <button type="submit" class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow transition duration-200">
                 Run Diagnostics
             </button>
+
+            <p id="loading-message" class="hidden text-red-600 font-bold text-center mt-4 animate-pulse">
+                Please wait... The first request may take 30-60 seconds while the free cloud server wakes up.
+            </p>
         </form>
 
         <div id="result-box" class="hidden p-8 border-t bg-gray-50 print-section">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">Diagnostic Report</h2>
             <div id="result-message" class="p-4 rounded-md font-bold text-lg mb-2"></div>
             <p id="system-message" class="text-sm text-gray-600 mb-6"></p>
+
             
             <button type="button" id="export-btn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow hide-on-print">
                 📄 Export Report to PDF
