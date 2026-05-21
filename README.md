@@ -23,10 +23,10 @@ The goal wasn't just to train a model. The goal was to build the full pipeline �
 Loaded the UCI Heart Disease dataset, looked at feature distributions, found missing values, and understood what the data actually means before touching any model.
 
 **2. Preprocessing**
-Cleaned the data, scaled numeric columns, and created two new features (`age_chol_ratio` and `bp_age_interaction`) to give the model better signals.
+Cleaned the data, scaled numeric columns,knn_imputation, feature selection (random forest based) and created two new features (`age_chol_ratio` and `bp_age_interaction`) to give the model better signals.
 
 **3. Training & Tuning**
-Trained both Logistic Regression and Random Forest. Used GridSearchCV with Cross-Validation to find the best settings for each. Picked Logistic Regression in the end — it matched Random Forest on recall but runs faster.
+Trained both Logistic Regression and Random Forest. Used GridSearchCV with Cross-Validation , regularization to find the best settings for each. Picked Logistic Regression in the end — it matched Random Forest on recall but runs faster.
 
 **4. Experiment Tracking**
 Every training run, metric, and parameter was logged with MLflow. This makes it easy to compare runs and know exactly why the final model was chosen.
