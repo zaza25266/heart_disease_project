@@ -1,0 +1,7 @@
+
+# lightweight Nginx image
+FROM nginx:alpine
+# copy static web files to Nginx public serving directory
+COPY static/ /usr/share/nginx/html
+# expose standard web port 80
+EXPOSE 80
