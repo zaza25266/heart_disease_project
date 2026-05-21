@@ -1,7 +1,14 @@
-
-venv/
+# Python and Virtual Environments
 __pycache__/
-.env
+*.pyc
+venv/
+env/
 
-data/*.db
-logs/*.log
+# Local Databases and Logs
+data/
+logs/
+*.db
+*.sqlite3
+
+# OS generated files
+.DS_Store
