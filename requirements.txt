@@ -8,4 +8,3 @@ joblib
 python-dotenv
 setuptools
 pytest
-mlflow
