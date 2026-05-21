@@ -59,6 +59,7 @@ class PatientData(BaseModel):
     
 # store logs to SQLite database
 def log_prediction_to_db(input_data : dict, prediction: int, probability: float):
+    os.makedirs("data", exist_ok=True)
     db_path = os.getenv("DB_PATH", "data/ml_project.db")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
