@@ -13,11 +13,11 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
 
-  static:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
       - "80:80"
     depends_on:
-      - api # Tells Docker to wait for the API to boot firs
+      - api # Tells Docker to wait for the API to boot first
