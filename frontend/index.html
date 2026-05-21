@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Heart Disease Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-6 md:p-12">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <h1 class="text-3xl font-bold">🫀 ML Clinical Diagnostics</h1>
+            <p class="mt-2 text-blue-100">Enter patient vitals below to generate a real-time prediction.</p>
+        </div>
+
+        <form id="prediction-form" class="p-8 space-y-6">
+            <h2 class="text-xl font-semibold border-b pb-2">Patient Vitals</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" id="age" value="55" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Resting BP (mm Hg)</label>
+                    <input type="number" id="trestbps" value="130" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cholesterol (mg/dl)</label>
+                    <input type="number" id="chol" value="240" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Max Heart Rate (thalach)</label>
+                    <input type="number" id="thalach" value="150" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ST Depression (oldpeak)</label>
+                    <input type="number" step="0.1" id="oldpeak" value="1.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Chest Pain Type</label>
+                    <select id="cp" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-white focus:border-blue-500 focus:ring-blue-500">
+                        <option value="1">Typical Angina</option>
+                        <option value="2">Atypical Angina</option>
+                        <option value="3">Non-anginal Pain</option>
+                        <option value="4">Asymptomatic</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Resting ECG</label>
+                    <select id="restecg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-white focus:border-blue-500 focus:ring-blue-500">
+                        <option value="0">Normal</option>
+                        <option value="1">ST-T wave abnormality</option>
+                        <option value="2">Left ventricular hypertrophy</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ST Segment Slope</label>
+                    <select id="slope" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-white focus:border-blue-500 focus:ring-blue-500">
+                        <option value="1">Upsloping</option>
+                        <option value="2">Flat</option>
+                        <option value="3">Downsloping</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Thalassemia</label>
+                    <select id="thal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-white focus:border-blue-500 focus:ring-blue-500">
+                        <option value="3.0">Normal</option>
+                        <option value="6.0">Fixed Defect</option>
+                        <option value="7.0">Reversable Defect</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md shadow transition duration-200">
+                Run Diagnostics
+            </button>
+        </form>
+
+        <div id="result-box" class="hidden p-8 border-t bg-gray-50">
+            <h2 class="text-xl font-semibold mb-4">Diagnostic Results</h2>
+            <div id="result-message" class="p-4 rounded-md font-bold text-lg mb-2"></div>
+            <p id="system-message" class="text-sm text-gray-600"></p>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
