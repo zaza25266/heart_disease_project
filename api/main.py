@@ -135,6 +135,7 @@ def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
     
     db_path = os.getenv("DB_PATH", "data/ml_project.db")
     try:
+        os.makedirs("data", exist_ok=True)
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
