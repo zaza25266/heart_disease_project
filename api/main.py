@@ -138,7 +138,7 @@ def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
-            f"SELECT * FROM prediction_logs ORDER BY timestamp DESC LIMIT {limit}]"
+            f"SELECT * FROM prediction_logs ORDER BY timestamp DESC LIMIT {limit}"
         )
         rows = cursor.fetchall()
         conn.close()
