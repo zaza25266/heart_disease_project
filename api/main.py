@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 # import logger
@@ -122,3 +122,36 @@ def predict_heart_disease(patient: PatientData):
     except Exception as e:
         logger.error(f"pipeline execution crashed during prediction : {str(e)}")
         raise HTTPException(status_code=400, detail=f"Prediction error: {str(e)}")
+    
+# end point with password to see logs
+@app.get("/logs")
+def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
+    
+    api_key = os.getenv("API_KEY")
+    
+    if not api_key or x_api_key != api_key:
+        logger.warning("unauthorized access attempt on / logs endpoint")
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    db_path = os.getenv("DB_PATH", "data/ml_project.db")
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM prediction_logs ORDER BY timestamp DESC LIMIT {limit}]"
+        )
+        rows = cursor.fetchall()
+        conn.close()
+        
+        columns = ["timestamp", "age", "trestbps", "chol", "thalach",
+                   "oldpeak", "cp", "restecg", "slope", "thal",
+                   "prediction", "probability"]
+        
+        logs = [dict(zip(columns, row)) for row in rows]
+                                
+        logger.info(f"logs endpoint accessed successfully — returned {len(logs)} records")
+        return {"total": len(logs), "logs": logs}  
+    
+    except Exception as e:
+        logger.error(f"failed to read prediction logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Could not read logs: {str(e)}")               
