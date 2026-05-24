@@ -1,11 +1,19 @@
-//  guarantees the HTML is fully loaded before JS attaches
+// guarantees the HTML is fully loaded before JS attaches
 document.addEventListener('DOMContentLoaded', () => {
-    
-    document.getElementById('prediction-form').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Absolute block on page reload
 
-        document.getElementById('loading-message').classList.remove('hidden');
-        document.getElementById('result-box').classList.add('hidden');
+    const form = document.getElementById('prediction-form');
+    const loading = document.getElementById('loading-message');
+    const resultBox = document.getElementById('result-box');
+    const resultMessage = document.getElementById('result-message');
+    const systemMessage = document.getElementById('system-message');
+    const exportBtn = document.getElementById('export-btn');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        // UI reset
+        loading.classList.remove('hidden');
+        resultBox.classList.add('hidden');
 
         const payload = {
             age: parseFloat(document.getElementById('age').value),
@@ -19,17 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             thal: document.getElementById('thal').value
         };
 
-        const resultBox = document.getElementById('result-box');
-        const resultMessage = document.getElementById('result-message');
-        const systemMessage = document.getElementById('system-message');
-        
-        resultBox.classList.remove('hidden');
-        resultBox.classList.add('fade-in');
-        
-        resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-gray-200 text-gray-700";
-        resultMessage.innerText = "Transmitting to ML Backend...";
-        systemMessage.innerText = "";
-
         try {
             const response = await fetch('https://heart-disease-api-1mrb.onrender.com/predict', {
                 method: 'POST',
@@ -37,47 +34,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                const diseaseProb = (data.risk_probability * 100);
-                const healthyProb = 100 - diseaseProb;
+            resultBox.classList.remove('hidden');
 
-                let riskStatus, confidence, chance, className;
-
-                if (diseaseProb < 50) {
-                    riskStatus = "Low Risk";
-                    confidence = healthyProb.toFixed(1);
-                    chance = `Chance of Disease: ${diseaseProb.toFixed(1)}%`;
-                    className = "p-4 rounded-md font-bold text-lg mb-2 bg-green-100 text-green-800 border border-green-300 whitespace-pre-line";
-                } else {
-                    riskStatus = "High Risk";
-                    confidence = diseaseProb.toFixed(1);
-                    chance = `Chance of Healthy: ${healthyProb.toFixed(1)}%`;
-                    className = "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300 whitespace-pre-line";
-                }
-
-                resultMessage.className = className;
-                resultMessage.innerText = `${riskStatus}\nConfidence: ${confidence}%\n${chance}`;
-                
-                // Add timestamp to the report
-                const date = new Date().toLocaleString();
-                systemMessage.innerText = `Report Generated: ${date} \nSystem: ${data.message}`;
-            } else {
-                const errorData = await response.json();
+            if (!response.ok) {
+                const err = await response.json();
                 resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-yellow-100 text-yellow-800 border border-yellow-300";
-                resultMessage.innerText = `API Error: ${errorData.detail || response.statusText}`;
+                resultMessage.innerText = `API Error: ${err.detail || response.statusText}`;
+                return;
             }
+
+            const data = await response.json();
+
+            const probability = (data.risk_probability * 100).toFixed(1);
+            const isHighRisk = data.prediction_class === 1;
+
+            resultMessage.className = isHighRisk
+                ? "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300"
+                : "p-4 rounded-md font-bold text-lg mb-2 bg-green-100 text-green-800 border border-green-300";
+
+            resultMessage.innerText =
+`${data.clinical_status}
+Disease Probability: ${probability}%`;
+
+            const date = new Date().toLocaleString();
+            systemMessage.innerText = `Report Generated: ${date}\nSystem: ${data.message}`;
+
         } catch (error) {
             resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300";
-            resultMessage.innerText = "Failed to connect to the backend API. Is FastAPI running?";
+            resultMessage.innerText = "Failed to connect to the backend API.";
         } finally {
-        // 2. HIDE THE RED MESSAGE when the fetch is totally finished
-        document.getElementById('loading-message').classList.add('hidden');
-    }
+            loading.classList.add('hidden');
+        }
     });
 
-    // PDF Export Logic
-    document.getElementById('export-btn').addEventListener('click', () => {
-        window.print(); // Triggers the browser's native PDF/Print engine
+    // PDF export
+    exportBtn.addEventListener('click', () => {
+        window.print();
     });
+
 });
