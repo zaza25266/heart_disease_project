@@ -2,7 +2,7 @@
 import pytest 
 import os
 import numpy as np 
-from preprosess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
+from preprocess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
 from sklearn.ensemble import RandomForestClassifier
 
 @pytest.fixture

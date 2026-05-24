@@ -1,7 +1,7 @@
 
 import joblib
 import pandas as pd
-from preprosess_pipeline.pre_processing import load_and_process_data
+from preprocess_pipeline.pre_processing import load_and_process_data
 
 def test_saved_model():
     print('loading raw data')

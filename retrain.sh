@@ -2,6 +2,8 @@
 
 # exit immediately if command fails
 set -e
+# Tell Python to use the current directory as the root for imports
+export PYTHONPATH=$(pwd)
 
 echo "WARNING: you are about to retrain model ..."
 
@@ -47,10 +49,12 @@ fi
    
 
 echo "[2/4] running data_setup.py ..."
-$PYTHON_CMD setup/data_setup.py
+$PYTHON_CMD  setup/data_setup.py
 
 echo "[3/4] running train.py ..."
-$PYTHON_CMD training/train.py
+echo "Booting MLflow Tracking Server in a new window..."
+osascript -e 'tell app "Terminal" to do script "cd '$PWD' && source venv/bin/activate && mlflow ui --port 5001"'
+$PYTHON_CMD  training/train.py
 
 echo "[4/4] running py_tests ..."
 pytest py_test/

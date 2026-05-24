@@ -12,3 +12,4 @@ slowapi
 mlflow
 scipy
 dotenv
+requests

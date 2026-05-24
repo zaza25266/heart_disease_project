@@ -3,6 +3,11 @@ import sqlite3
 import pandas as pd 
 from dotenv import load_dotenv
 from pathlib import Path 
+import ssl
+import io
+import requests
+
+
 
 # Load environment configurations
 load_dotenv()
@@ -38,7 +43,8 @@ def download_and_store_data():
     print("\nStep 1: Downloading raw dataset from UCI Repository...")
     try:
         for url in urls:
-            single_df = pd.read_csv(url, header=None, names=columns, na_values="?")
+            response = requests.get(url, verify=False)
+            single_df = pd.read_csv(io.StringIO(response.text), header=None,names=columns)
             dataframes.append(single_df)
         # total dataset
         df = pd.concat(dataframes, ignore_index=True)

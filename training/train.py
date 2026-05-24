@@ -10,13 +10,12 @@ from sklearn.model_selection import GridSearchCV, cross_validate
 import numpy as np  
 
 # import pre-processing functions
-from preprosess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
+from preprocess_pipeline.pre_processing import load_and_process_data, build_preprocessing_pipeline
 
 
 # configure mlflow  track experiments locally
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://127.0.0.1:5001")
 mlflow.set_experiment("Heart_Disease_project_experiments")
-
 def log_matrices(y_test, y_pred, y_prob=None, model_name="model"):
     mlflow.log_metric("recall", recall_score(y_test, y_pred))
     mlflow.log_metric("precision", precision_score(y_test, y_pred))
