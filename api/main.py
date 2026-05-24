@@ -8,6 +8,12 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from functools import lru_cache
+from fastapi import Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 
 # import logger
 from logs.logger import get_core_logger
@@ -23,6 +29,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
+limiter = Limiter(key_func = get_remote_address)
+app.state.Limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
 # cross_over_resourse sharing to website
 app.add_middleware(
     CORSMiddleware,
@@ -36,14 +47,16 @@ logger.info("starting fastapi application...")
 
 MODEL_PATH = "models/best_Tuned_Logistic_Regression.pkl"
 
-# load the trained model
-try:
-    model = joblib.load(MODEL_PATH)
-    logger.info(f"Model loaded successfully from {MODEL_PATH}")
-    
-except Exception as e:
-    model = None
-    logger.error(f"Error loading model: {str(e)}")
+@lru_cache(maxsize=1)
+def load_model():
+    # load the trained model
+    try:
+        model = joblib.load(MODEL_PATH)
+        logger.info(f"Model loaded successfully from {MODEL_PATH}")
+
+    except Exception as e:
+        model = None
+        logger.error(f"Error loading model: {str(e)}")
 
 # incoming JSON payload
 class PatientData(BaseModel):
@@ -90,7 +103,8 @@ def log_prediction_to_db(input_data : dict, prediction: int, probability: float)
 @app.post("/predict")
 def predict_heart_disease(patient: PatientData):
     logger.info(f"incoming prediction request recieved via POST / predict (patient: {patient})")
-    
+    # call model
+    model = load_model()
     if model is None:
         logger.info("model not loaded, cannot generate prediction")
         raise HTTPException(status_code=500, detail="Model not loaded")
@@ -125,6 +139,7 @@ def predict_heart_disease(patient: PatientData):
     
 # end point with password to see logs
 @app.get("/logs")
+@limiter.limit("10/minute")
 def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
     
     api_key = os.getenv("API_KEY")
@@ -135,7 +150,6 @@ def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
     
     db_path = os.getenv("DB_PATH", "data/ml_project.db")
     try:
-        os.makedirs("data", exist_ok=True)
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute(
