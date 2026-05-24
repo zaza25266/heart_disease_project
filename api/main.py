@@ -45,7 +45,7 @@ app.add_middleware(
 
 logger.info("starting fastapi application...")
 
-MODEL_PATH = "models/best_Tuned_Logistic_Regression.pkl"
+MODEL_PATH = "models/best_Tuned_Random_Forest.pkl"
 
 @lru_cache(maxsize=1)
 def load_model():
