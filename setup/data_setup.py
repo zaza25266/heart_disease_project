@@ -9,7 +9,15 @@ load_dotenv()
 
 # Grab the database path from .env
 DB_PATH = Path(os.getenv('DB_PATH', 'data/ml_project.db')).resolve()
-DATA_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+
+# The exact URLs for all 4 hospital datasets
+urls = [
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data",
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.hungarian.data",
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.switzerland.data",
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.va.data"
+]
+
 
 def download_and_store_data():
     # confirm that the target local directory folder physically exists
@@ -25,9 +33,15 @@ def download_and_store_data():
         "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num"
     ]
     
+    dataframes = []
+    
     print("\nStep 1: Downloading raw dataset from UCI Repository...")
     try:
-        df = pd.read_csv(DATA_URL, header=None, names=columns)
+        for url in urls:
+            single_df = pd.read_csv(url, header=None, names=columns, na_values="?")
+            dataframes.append(single_df)
+        # total dataset
+        df = pd.concat(dataframes, ignore_index=True)
         print(f"Successfully downloaded {df.shape[0]} patient rows from UCI.")
     except Exception as e:
         print(f"CRITICAL ERROR: Failed to download data from UCI web server! Details: {e}")

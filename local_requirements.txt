@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+scikit-learn
+pandas
+numpy
+joblib
+python-dotenv
+setuptools
+pytest
+slowapi
+mlflow
+scipy
+dotenv
