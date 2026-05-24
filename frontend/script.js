@@ -39,15 +39,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const data = await response.json();
-                const confidence = (data.risk_probability * 100).toFixed(1);
+                const diseaseProb = (data.risk_probability * 100);
+                const healthyProb = 100 - diseaseProb;
 
-                if (data.prediction_class === 1) {
-                    resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300";
-                    resultMessage.innerText = `${data.clinical_status} (Confidence: ${confidence}%)`;
+                let riskStatus, confidence, chance, className;
+
+                if (diseaseProb < 50) {
+                    riskStatus = "Low Risk";
+                    confidence = healthyProb.toFixed(1);
+                    chance = `Chance of Disease: ${diseaseProb.toFixed(1)}%`;
+                    className = "p-4 rounded-md font-bold text-lg mb-2 bg-green-100 text-green-800 border border-green-300 whitespace-pre-line";
                 } else {
-                    resultMessage.className = "p-4 rounded-md font-bold text-lg mb-2 bg-green-100 text-green-800 border border-green-300";
-                    resultMessage.innerText = `${data.clinical_status} (Confidence: ${confidence}%)`;
+                    riskStatus = "High Risk";
+                    confidence = diseaseProb.toFixed(1);
+                    chance = `Chance of Healthy: ${healthyProb.toFixed(1)}%`;
+                    className = "p-4 rounded-md font-bold text-lg mb-2 bg-red-100 text-red-800 border border-red-300 whitespace-pre-line";
                 }
+
+                resultMessage.className = className;
+                resultMessage.innerText = `${riskStatus}\nConfidence: ${confidence}%\n${chance}`;
                 
                 // Add timestamp to the report
                 const date = new Date().toLocaleString();
