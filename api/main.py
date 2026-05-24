@@ -53,11 +53,11 @@ def load_model():
     try:
         model = joblib.load(MODEL_PATH)
         logger.info(f"Model loaded successfully from {MODEL_PATH}")
-
+        return model
     except Exception as e:
         model = None
         logger.error(f"Error loading model: {str(e)}")
-
+        return None
 # incoming JSON payload
 class PatientData(BaseModel):
     age: float
@@ -140,7 +140,7 @@ def predict_heart_disease(patient: PatientData):
 # end point with password to see logs
 @app.get("/logs")
 @limiter.limit("10/minute")
-def get_current_prediction_logs(x_api_key: str = Header(None), limit: int = 50):
+def get_current_prediction_logs(request: Request,x_api_key: str = Header(None), limit: int = 50):
     
     api_key = os.getenv("API_KEY")
     
